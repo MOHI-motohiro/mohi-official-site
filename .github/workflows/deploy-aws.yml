@@ -7,6 +7,8 @@ on:
     paths:
       - "index.html"
       - "assets/**"
+      - "app/**"
+      - ".github/workflows/deploy-aws.yml"
   workflow_dispatch:
 
 jobs:
@@ -32,6 +34,15 @@ jobs:
       - name: Deploy assets
         run: |
           if [ -d "assets" ]; then
+            ssh ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "mkdir -p /var/www/mohi.co.jp/assets"
             scp -r assets/* \
             ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/var/www/mohi.co.jp/assets/
+          fi
+
+      - name: Deploy app pages
+        run: |
+          if [ -d "app" ]; then
+            ssh ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "mkdir -p /var/www/mohi.co.jp/app"
+            scp -r app/* \
+            ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/var/www/mohi.co.jp/app/
           fi
